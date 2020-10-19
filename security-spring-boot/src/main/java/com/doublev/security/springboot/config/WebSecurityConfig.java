@@ -26,17 +26,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    // 定义用户信息服务
-    //@Bean
-    //@Override
-    //public UserDetailsService userDetailsService() {
-    //    InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-    //    manager.createUser(User.withUsername("zhangsan")
-    //            .password("123").authorities("p1").build());
-    //    manager.createUser(User.withUsername("lisi")
-    //            .password("123").authorities("p2").build());
-    //    return manager;
-    //}
 
     // 密码编码器
     @Bean
@@ -49,7 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests()
+        http.csrf().disable()
+                .authorizeRequests()
                 .antMatchers("/r/r1").hasAnyAuthority("p1")
                 .antMatchers("/r/r2").hasAnyAuthority("p2")
                 // 校验此路径
@@ -57,11 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .anyRequest().permitAll()
                 .and()
-                // 允许表单登录
                 .formLogin()
                 .loginPage("/login-view")
                 .loginProcessingUrl("/login")
-                .successForwardUrl("/login-success")
-                .permitAll();
+                .successForwardUrl("/login-success");
     }
 }
