@@ -3,14 +3,10 @@ package com.doublev.security.springboot.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * @ Project: security-spring
@@ -40,16 +36,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/r/r1").hasAnyAuthority("p1")
-                .antMatchers("/r/r2").hasAnyAuthority("p2")
-                // 校验此路径
-                .antMatchers("/r/**")
-                .authenticated()
+                // 鉴权
+                //.antMatchers("/r/r1").hasAnyAuthority("p1")
+                //.antMatchers("/r/r2").hasAnyAuthority("p2")
+                //.antMatchers("/r/**")
+                //.authenticated()
                 .anyRequest().permitAll()
                 .and()
+                // 页面跳转
                 .formLogin()
                 .loginPage("/login-view")
                 .loginProcessingUrl("/login")
-                .successForwardUrl("/login-success");
+                .successForwardUrl("/login-success")
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login-view?logout")
+                .and()
+                // session管理
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
     }
 }

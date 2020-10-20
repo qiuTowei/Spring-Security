@@ -2,6 +2,7 @@ package com.doublev.security.springboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 /**
  * @ Project: security-spring-boot
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @ History: 修订历史（历次修订内容、修订人、修订时间等）
  */
 @SpringBootApplication
+@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
 public class SecuritySpringBootApplication {
     public static void main(String[] args) {
         SpringApplication.run(SecuritySpringBootApplication.class, args);

@@ -1,5 +1,9 @@
 package com.doublev.security.springboot.service;
 
+import com.doublev.security.springboot.dao.UserDao;
+import com.doublev.security.springboot.model.UserDto;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -7,6 +11,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @ Project: security-spring-boot
@@ -21,14 +29,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SpringDataUsderDetailsService implements UserDetailsService {
+    @Autowired
+    private UserDao userDao;
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        // TODO 后续通过数据库进行查询
-        UserDetails userDetails = User.withUsername("zhangsan")
+        UserDto dto = userDao.getUserByUsername(s);
+        if (Objects.isNull(dto)) {
+            return null;
+        }
+        List<String> list = userDao.findPermissionByUserId(dto.getId());
+        return User.withUsername(dto.getUsername())
                 // BCrypt 加密
-                .password("$2a$10$QGPOw259ClnQIK4RP8Ds8O7v.RrywPWAxh2Xv8y/JaE8n9zYRoLgW")
-                .authorities("p1")
+                .password(dto.getPassword())
+                .authorities(list.toArray(new String[0]))
                 .build();
-        return userDetails;
     }
 }

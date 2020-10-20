@@ -1,10 +1,14 @@
 package com.doublev.security.springboot.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 /**
  * @ Project: security-springmvc
@@ -21,18 +25,37 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
     @RequestMapping(value = "/login-success",produces = {"text/plain;charset=utf-8"})
     public String login() {
-        return "登录成功";
+        return getUsername() + "登录成功";
     }
     @GetMapping(value = "/r/r1",produces = {"text/plain;charset=utf-8"})
-    public String getSessionR1(HttpSession session) {
-        return getName(session) + "访问资源r1";
+    // 表示拥有p1权限才能访问该资源
+    @PreAuthorize("hasAnyAuthority('p1')")
+    public String getSessionR1() {
+        return getUsername() + "访问资源r1";
     }
+
     @GetMapping(value = "/r/r2",produces = {"text/plain;charset=utf-8"})
-    public String getSessionR2(HttpSession session) {
-        return getName(session) + "访问资源r2";
+    // 表示拥有p3权限才能访问该资源
+    @PreAuthorize("hasAnyAuthority('p3')")
+    public String getSessionR2( ) {
+        return getUsername() + "访问资源r2";
     }
-    private String getName(HttpSession session) {
-        return "用户名";
+
+
+    private String getUsername() {
+        String username;
+        // 通过上下文信息获取用户信息
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 用户身份
+        Object principal = authentication.getPrincipal();
+        if (Objects.isNull(principal)) {
+            username = "匿名";
+        }else if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        }else {
+            username = principal.toString();
+        }
+        return username;
     }
 
 }
