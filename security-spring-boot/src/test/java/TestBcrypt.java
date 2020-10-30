@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TestBcrypt {
     @Test
     public void test1() {
-        String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());
+        String hashpw = BCrypt.hashpw("secret", BCrypt.gensalt());
         System.out.println(hashpw);
         boolean checkpw = BCrypt.checkpw("123", "$2a$10$1vdfPR44BQXUuMA0cO91pOn7dSLlQralO6vCJmMbQSvarqk3ATbTC");
         System.out.println("校验结果" + checkpw);

@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
     // 认证管理器
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
 
@@ -41,14 +41,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
                 .authorizeRequests()
-                // 鉴权
                 .antMatchers("/r/r1").hasAnyAuthority("p1")
-                .antMatchers("/r/r2").hasAnyAuthority("p2")
-                .antMatchers("/r/**")
-                .authenticated()
-                .anyRequest().permitAll()
+                .antMatchers("/login*").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                // 页面跳转
-                .formLogin();
+                .formLogin()
+        ;
     }
 }

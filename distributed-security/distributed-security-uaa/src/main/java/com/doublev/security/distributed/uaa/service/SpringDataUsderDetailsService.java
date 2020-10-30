@@ -1,5 +1,6 @@
 package com.doublev.security.distributed.uaa.service;
 
+import com.alibaba.fastjson.JSON;
 import com.doublev.security.distributed.uaa.dao.UserDao;
 import com.doublev.security.distributed.uaa.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,8 @@ public class SpringDataUsderDetailsService implements UserDetailsService {
             return null;
         }
         List<String> list = userDao.findPermissionByUserId(dto.getId());
-        return User.withUsername(dto.getUsername())
+        String principal = JSON.toJSONString(dto);
+        return User.withUsername(principal)
                 // BCrypt 加密
                 .password(dto.getPassword())
                 .authorities(list.toArray(new String[0]))
